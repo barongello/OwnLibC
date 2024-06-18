@@ -53,11 +53,18 @@ void oh_cl_dump(OHChunkList* cl, char* name)
     const OHChunkEntry* entry = &(cl->items[i]);
 
     printf(
-      "Index %llu: (start: %llu, end: %llu, size: %llu)\n",
+      "Index %llu:    (start: %llu, end: %llu, size: %llu)\n",
       i,
-      (uint64_t)entry->start,
-      (uint64_t)entry->end,
+      entry->start,
+      entry->end,
       entry->size
+    );
+
+    printf(
+      "Pointers %llu: (start: %016llX, end: %016llX)\n",
+      i,
+      (uint64_t)(&OH_HEAP) + entry->start,
+      (uint64_t)(&OH_HEAP) + entry->end
     );
   }
 }
@@ -162,8 +169,8 @@ void oh_cl_remove(OHChunkList* cl, uint64_t start)
 
   for (uint64_t i = index; i < cl->size - 1; ++i)
   {
-    OHChunkEntry* entry_current = &(cl->items[index]);
-    OHChunkEntry* entry_next = &(cl->items[index + 1]);
+    OHChunkEntry* entry_current = &(cl->items[i]);
+    OHChunkEntry* entry_next = &(cl->items[i + 1]);
 
     entry_current->start = entry_next->start;
     entry_current->end = entry_next->end;
@@ -193,7 +200,7 @@ void oh_dump(void)
 
     for (uint64_t j = 0; j < 8; ++j)
     {
-      const char byte = *((char*)(address + j));
+      const unsigned char byte = *((unsigned char*)(address + j));
 
       printf("%02X", byte);
 
@@ -256,7 +263,7 @@ void oh_free(void* ptr)
 
   oh_cl_add(&OH_CHUNKS_FREE, entry->start, entry->size, true);
 
-  oh_cl_remove(&OH_CHUNKS_USED, start);
+  oh_cl_remove(&OH_CHUNKS_USED, entry->start);
 }
 #endif
 #endif
