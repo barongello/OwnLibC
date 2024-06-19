@@ -53,24 +53,28 @@ void oh_cl_dump(OHChunkList* cl, char* name)
 {
   printf("%s chunks (%llu):\n", name, cl->size);
 
+  if (cl->size == 0)
+  {
+    printf("  `- Empty\n");
+
+    return;
+  }
+
   for (uint64_t i = 0; i < cl->size; ++i)
   {
     const OHChunkEntry* entry = &(cl->items[i]);
 
-    printf(
-      "Index %llu:    (start: %llu, end: %llu, size: %llu)\n",
-      i,
-      entry->start,
-      entry->end,
-      entry->size
-    );
+    const bool last = (i == cl->size - 1);
+    const char char_main = (last ? '`' : '|');
+    const char char_sub = (last ? ' ' : '|');
 
-    printf(
-      "Pointers %llu: (start: %016llX, end: %016llX)\n",
-      i,
-      (uint64_t)(&OH_HEAP) + entry->start,
-      (uint64_t)(&OH_HEAP) + entry->end
-    );
+    printf("  %c- Chunk %llu (%llu bytes)\n", char_main, i, entry->size);
+    printf("  %c    |- Index\n", char_sub);
+    printf("  %c    |    |- Start: %llu\n", char_sub, entry->start);
+    printf("  %c    |    `-   End: %llu\n", char_sub, entry->end);
+    printf("  %c    `- Pointer\n", char_sub);
+    printf("  %c         |- Start: %016llX\n", char_sub, (uint64_t)(&OH_HEAP) + entry->start);
+    printf("  %c         `-   End: %016llX\n", char_sub, (uint64_t)(&OH_HEAP) + entry->end);
   }
 }
 
