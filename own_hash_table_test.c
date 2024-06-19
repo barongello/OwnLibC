@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define OHT_CAPACITY (OHTIndex)(1024)
+#define OHT_CAPACITY (1024)
 #define OHT_IMPLEMENTATION
 #include "own_hash_table.h"
 
