@@ -1,0 +1,4 @@
+.vscode
+*.dSYM
+own_hash_table_test
+own_heap_test
