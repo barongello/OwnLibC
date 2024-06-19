@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define OH_CAPACITY 40
+#define OH_CAPACITY 32
 #define OH_DUMP_STEP 16
 #define OH_IMPLEMENTATION
 #include "own_heap.h"
