@@ -27,6 +27,18 @@
 #define OH_CHUNK_CAPACITY (1024 * 1024)
 #endif
 
+#define oh_dump_full(...) \
+  do { \
+    printf("(Dump start: "__VA_ARGS__); \
+    printf(")\n"); \
+    oh_cl_dump(&OH_CHUNKS_FREE, "Free"); \
+    oh_cl_dump(&OH_CHUNKS_USED, "Used"); \
+    oh_dump(); \
+    printf("(Dump end: "__VA_ARGS__); \
+    printf(")\n"); \
+    printf("\n"); \
+  } while (0)
+
 typedef struct {
   uint64_t start;
   uint64_t end;
@@ -59,7 +71,7 @@ void  oh_free (void* ptr);
 #ifdef OH_IMPLEMENTATION
 void oh_cl_dump(OHChunkList* cl, char* name)
 {
-  printf("%s chunks (%llu)\n", name, cl->size);
+  printf("%s chunks (%llu chunks)\n", name, cl->size);
 
   if (cl->size == 0)
   {
