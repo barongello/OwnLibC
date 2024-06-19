@@ -2,12 +2,17 @@
 #define OH_HEADER_
 
 #include <assert.h>
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #ifndef OH_CAPACITY
 #define OH_CAPACITY (1024 * 1024)
+#endif
+
+#if OH_CAPACITY < 8 || OH_CAPACITY % 8 != 0
+#error "OH_CAPACITY is either less than 8 or not divisible by 8"
 #endif
 
 #ifndef OH_CHUNK_CAPACITY
@@ -202,10 +207,19 @@ void oh_dump(void)
     {
       const unsigned char byte = *((unsigned char*)(address + j));
 
-      printf("%02X", byte);
-
-      printf("%c", j == 7 ? '\n' : ' ');
+      printf("%02X ", byte);
     }
+
+    printf("| ");
+
+    for (uint64_t j = 0; j < 8; ++j)
+    {
+      const unsigned char byte = *((unsigned char*)(address + j));
+
+      printf("%c", isprint(byte) ? byte : '.');
+    }
+
+    printf("\n");
   }
 }
 
