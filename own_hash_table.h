@@ -55,7 +55,11 @@ typedef OHT_VALUE_TYPE OHTValue;
 typedef OHT_INDEX_TYPE OHTIndex;
 
 #ifndef OHT_CAPACITY
-#define OHT_CAPACITY (OHTIndex)4096
+#define OHT_CAPACITY (4 * 1024)
+#endif
+
+#if OHT_CAPACITY < 1
+#error OHT_CAPACITY is less than 1
 #endif
 
 typedef struct
