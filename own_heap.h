@@ -15,6 +15,14 @@
 #error "OH_CAPACITY is either less than 8 or not divisible by 8"
 #endif
 
+#ifndef OH_DUMP_STEP
+#define OH_DUMP_STEP 16
+#endif
+
+#if OH_DUMP_STEP < 1 || OH_DUMP_STEP > 32
+#error "OH_DUMP_STEP is either less than 1 or greater than 32"
+#endif
+
 #ifndef OH_CHUNK_CAPACITY
 #define OH_CHUNK_CAPACITY (1024 * 1024)
 #endif
@@ -51,7 +59,7 @@ void  oh_free (void* ptr);
 #ifdef OH_IMPLEMENTATION
 void oh_cl_dump(OHChunkList* cl, char* name)
 {
-  printf("%s chunks (%llu):\n", name, cl->size);
+  printf("%s chunks (%llu)\n", name, cl->size);
 
   if (cl->size == 0)
   {
@@ -76,6 +84,8 @@ void oh_cl_dump(OHChunkList* cl, char* name)
     printf("  %c         |- Start: %016llX\n", char_sub, (uint64_t)(&OH_HEAP) + entry->start);
     printf("  %c         `-   End: %016llX\n", char_sub, (uint64_t)(&OH_HEAP) + entry->end);
   }
+
+  printf("\n");
 }
 
 long long oh_cl_find_index_by_start(OHChunkList* cl, uint64_t start)
@@ -197,18 +207,50 @@ void oh_cl_remove(OHChunkList* cl, uint64_t start)
 
 void oh_dump(void)
 {
-  printf("Heap:\n");
+  printf("Heap (%llu bytes)\n", (uint64_t)OH_CAPACITY);
+
+  printf("Address          | ");
+
+  for (uint8_t i = 0; i < OH_DUMP_STEP; ++i)
+  {
+    printf("%02X ", i);
+  }
+
+  printf("|\n");
+
+  printf("-------------------");
+  
+  for (uint8_t i = 0; i < OH_DUMP_STEP; ++i)
+  {
+    printf("---");
+  }
+
+  printf("--");
+
+  for (uint8_t i = 0; i < OH_DUMP_STEP; ++i)
+  {
+    printf("-");
+  }
+
+  printf("\n");
 
   const void* ptr = &OH_HEAP;
 
-  for (uint64_t i = 0; i < OH_CAPACITY; i += 8)
+  for (uint64_t i = 0; i < OH_CAPACITY; i += OH_DUMP_STEP)
   {
     const uint64_t address = (uint64_t)ptr + i;
 
     printf("%016llX | ", address);
 
-    for (uint64_t j = 0; j < 8; ++j)
+    for (uint64_t j = 0; j < OH_DUMP_STEP; ++j)
     {
+      if (i + j >= OH_CAPACITY)
+      {
+        printf("   ");
+
+        continue;
+      }
+
       const unsigned char byte = *((unsigned char*)(address + j));
 
       printf("%02X ", byte);
@@ -216,8 +258,13 @@ void oh_dump(void)
 
     printf("| ");
 
-    for (uint64_t j = 0; j < 8; ++j)
+    for (uint64_t j = 0; j < OH_DUMP_STEP; ++j)
     {
+      if (i + j >= OH_CAPACITY)
+      {
+        continue;
+      }
+
       const unsigned char byte = *((unsigned char*)(address + j));
 
       printf("%c", isprint(byte) ? byte : '.');
