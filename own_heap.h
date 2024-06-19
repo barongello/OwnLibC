@@ -12,7 +12,7 @@
 #endif
 
 #if OH_CAPACITY < 8 || OH_CAPACITY % 8 != 0
-#error "OH_CAPACITY is either less than 8 or not divisible by 8"
+#error OH_CAPACITY is either less than 8 or not divisible by 8
 #endif
 
 #ifndef OH_DUMP_STEP
@@ -20,7 +20,7 @@
 #endif
 
 #if OH_DUMP_STEP < 1 || OH_DUMP_STEP > 32
-#error "OH_DUMP_STEP is either less than 1 or greater than 32"
+#error OH_DUMP_STEP is either less than 1 or greater than 32
 #endif
 
 #ifndef OH_CHUNK_CAPACITY
